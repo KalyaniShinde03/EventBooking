@@ -4,38 +4,38 @@ const ApiUrl = process.env.REACT_APP_API_KEY;
 
 const showBookingList = async () => {
     const result = await axios.get(ApiUrl + Constant.GET_ALL_BOOKING);
+    return result.data.data
+}
+
+const addBooking = async (obj) => {
+    const result = await axios.post(ApiUrl + Constant.ADD_BOOKING, obj);
     return result.data
 }
 
 
-const getMasterList = async () => {
-    const result = await axios.get(ApiUrl + Constant.GET_ALL_MASTER);
+const updateBooking = async (obj) => {
+    const result = await axios.post(ApiUrl + Constant.UPDATE_BOOKING, obj);
     return result.data
 }
 
-const addMaster = async (obj) => {
-    try {
-
-        const result = await axios.post(ApiUrl + Constant.ADD_MASTER, obj);
-        return result.data
-    } catch (error) {
-        alert(error.code)
-    }
-
+const editBooking = async (id) => {
+    const result = await axios.get(ApiUrl + Constant.EDIT_BOOKING + id);
+    return result.data.data
 }
-const updateMaster = async (obj) => {
-    try {
-        const result = await axios.post(ApiUrl + Constant.UPDATE_MASTER, obj);
-        return result.data
-    } catch (error) {
-    }
+
+const deleteBooking = async (id) => {
+    const result = await axios.get(ApiUrl + Constant.DELETE_BOOKING + id);
+    return result.data
 }
-const onDeleteMaster = async (obj) => {
-    const isDelte = window.confirm('Are You Sure want to Delete');
-    if (isDelte) {
-        const result = await axios.post(ApiUrl + Constant.DELETE_MASTER, obj);
-        return result.data
-    }
+
+const showUserList = async () => {
+    const result = await axios.get(ApiUrl + Constant.GET_ALL_USER);
+    return result.data.data
+}
+
+const showEventList = async () => {
+    const result = await axios.get(ApiUrl + Constant.GET_ALL_EVENT);
+    return result.data.data
 }
 
 
@@ -51,4 +51,7 @@ const onDeleteMaster = async (obj) => {
 
 
 
-export {showBookingList,getMasterList,addMaster,updateMaster,onDeleteMaster}
+
+
+
+export { showBookingList, addBooking, updateBooking, editBooking, deleteBooking, showUserList, showEventList }

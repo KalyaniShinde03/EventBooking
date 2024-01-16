@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Events = () => {
+const Event = () => {
     let [Events, setEvents] = useState([]);
 
     let [EventObj, setEventObj] = useState({
@@ -279,4 +279,4 @@ const Events = () => {
     );
 };
 
-export default Events;
+export default Event;

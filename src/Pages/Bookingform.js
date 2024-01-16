@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import {showBookingList} from '../Services/Api'
+import { showBookingList, addBooking, updateBooking, editBooking, deleteBooking, showUserList, showEventList } from '../Services/Api'
 
 const Bookingform = () => {
 
@@ -19,48 +19,38 @@ const Bookingform = () => {
 
 
 
-    const getAllUserData = async () => {
-        const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/GetAllUsers')
+    const getAllUserData = () => {
+        showUserList().then((data) => {
+            setUserData(data);
+        })
+    }
 
-        setUserData(result.data.data);
+    const getAllEvents = () => {
+        showUserList().then((data) => {
+            setAllEvent(data);
+
+        })
+
 
 
     }
-
-    const getAllEvents = async () => {
-        const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/GetAllEvents')
-
-        setAllEvent(result.data.data);
-
-
-    }
-
-    // const getAllBookingList = () => {
-    //     showBookingList().then((data)=>{
-    //         seteventBookingList(data)
-    //         setIsLoader(false)
-    //     })
-
-
-    // }
 
     const getAllBookingList = () => {
         showBookingList().then((data) => {
-            if (Array.isArray(data)) {
-                seteventBookingList(data);
-                setIsLoader(false);
-            } else {
-                console.error('Data is not an array:', data);
-            }
-        });
-    };
-    
+            seteventBookingList(data)
+            setIsLoader(false)
+        })
+
+
+    }
+
+
 
     useEffect(() => {
         getAllUserData();
         getAllEvents();
         getAllBookingList();
-    },[])
+    }, [])
 
     let [bookingObj, setBookingObj] = useState({
         "bookingId": 0,
@@ -83,28 +73,31 @@ const Bookingform = () => {
     );
 
     const onSaveBooking = async () => {
-        const result = await axios.post('https://freeapi.miniprojectideas.com/api/EventBooking/BookEvent',bookingObj)
-       
-        if (result.data.result) {
-          
-            alert('Booking successfully')
-            getAllBookingList();
-        } else {
-            alert(result.data.message)
-        }
+        addBooking(bookingObj).then((data) => {
+            if (data.result) {
+
+                alert('Booking successfully')
+                getAllBookingList();
+            } else {
+                alert(data.message)
+            }
+
+
+        })
 
     }
 
     const onUpdateBooking = async () => {
-        const result = await axios.post('https://freeapi.miniprojectideas.com/api/EventBooking/BookEvent ', bookingObj)
-    
-        if (result.data.result) {
-        
-            alert('update successfully')
-            getAllBookingList();
-        } else {
-            alert(result.data.message)
-        }
+        updateBooking(bookingObj).then((data) => {
+            if (data.result) {
+
+                alert('update successfully')
+                getAllBookingList();
+            } else {
+                alert(data.message)
+            }
+
+        })
 
     }
 
@@ -143,31 +136,34 @@ const Bookingform = () => {
         )
     }
 
-    const onEditBooking = async (id) => {
-        
-        const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/GetBookingById?id=' + id)
+    const onEditBooking = (bookingId) => {
 
-        setBookingObj(result.data.data)
-        
-        changeView();
+        editBooking(bookingId).then((data) => {
+            setBookingObj(data)
+
+            changeView();
+        })
+
     }
 
 
-    const onDeleteBooking = async (id) => {
-        const isDelete = window.confirm('Are you sure want to delete')
-        if (isDelete) {
-            const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/DeleteBookingById?id= ' + id)
-            
-            if (result.data) {
-                
-                alert('Booking deleted successfully')
-                getAllBookingList();
+    const onDeleteBooking = (bookingId) => {
+        deleteBooking(bookingId).then((data) => {
+            const isDelete = window.confirm('Are you sure want to delete')
+            if (isDelete) {
 
-            } else {
-                alert(result.data.message)
+                if (data) {
+
+                    alert('Booking deleted successfully')
+                    getAllBookingList();
+
+                } else {
+                    alert(data.message)
+                }
+
             }
+        })
 
-        }
     }
 
 
@@ -227,8 +223,8 @@ const Bookingform = () => {
                                         </div>
                                         <div className='row mt-2'>
                                             <div className='col-2'>
-                                                {bookingObj.bookingId ==0 && <button className='btn btn-success btn-sm' onClick={onSaveBooking}>Save</button>}
-                                                {bookingObj.bookingId !==0 && <button className='btn btn-warrning btn-sm' onClick={onUpdateBooking}>Update</button>}
+                                                {bookingObj.bookingId == 0 && <button className='btn btn-success btn-sm' onClick={onSaveBooking}>Save</button>}
+                                                {bookingObj.bookingId !== 0 && <button className='btn btn-warning btn-sm' onClick={onUpdateBooking}>Update</button>}
 
                                             </div>
                                             <div className='col-2'>
@@ -310,11 +306,7 @@ return (<option value={item.bookingId}>{item.name}</option>)
                                                                         <td>{item.identityCard}</td>
                                                                         <td>{item.cardNo}</td>
                                                                         <td>{item.contactNo}</td>
-                                                                        <td>
-                                                                            {/* <button className='btn btn-info btn-sm' onClick={() => onEditBooking(item.eventId)}>Edit</button>&nbsp; */}
-                                                                            {/* <button className='btn btn-warning btn-sm' onClick={() => onDeleteBooking(item.eventId)} >Delete</button> */}
 
-                                                                        </td>
                                                                     </tr>
 
                                                                 )
@@ -407,20 +399,20 @@ return (<option value={item.bookingId}>{item.name}</option>)
                                             {
                                                 eventBookingList.map((item, index) => {
                                                     return (<tr>
-                                                            <td>{index + 1}</td>
-                                                            <td>{item.eventName}</td>
-                                                            <td>{item.startDate}</td>
-                                                            <td>{item.customerName}</td>
-                                                            <td>{item.customerMobile}</td>
-                                                            <td>{item.noOfTickets}</td>
-                                                            <td>
-                                                                <button className='btn btn-info btn-sm' onClick={() =>onEditBooking(item.bookingId)}>Edit</button>&nbsp;
-                                                                </td>
-                                                                <td>
-                                                                <button className='btn btn-danger btn-sm'onClick={()=>onDeleteBooking(item.bookingId)}>Delete</button> 
+                                                        <td>{index + 1}</td>
+                                                        <td>{item.eventName}</td>
+                                                        <td>{item.startDate}</td>
+                                                        <td>{item.customerName}</td>
+                                                        <td>{item.customerMobile}</td>
+                                                        <td>{item.noOfTickets}</td>
+                                                        <td>
+                                                            <button className='btn btn-info btn-sm' onClick={() => onEditBooking(item.bookingId)}>Edit</button>&nbsp;
+                                                        </td>
+                                                        <td>
+                                                            <button className='btn btn-danger btn-sm' onClick={() => onDeleteBooking(item.bookingId)}>Delete</button>
 
-                                                            </td>
-                                                        </tr>
+                                                        </td>
+                                                    </tr>
                                                     )
 
                                                 })

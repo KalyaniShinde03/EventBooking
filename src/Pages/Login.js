@@ -13,7 +13,9 @@ const Login = () => {
     }
 
     let isValid = true;
-     const SaveLogin = async ()=>{
+    const SaveLogin = async (event) => {
+        event.preventDefault(); // Prevents the default form submission behavior
+    
         setisFormSubmitted(true);
         if (isValid) {
             const result = await axios.post('https://freeapi.miniprojectideas.com/api/EventBooking/Login', loginObj);
