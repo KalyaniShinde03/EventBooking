@@ -37,6 +37,29 @@ const showEventList = async () => {
     const result = await axios.get(ApiUrl + Constant.GET_ALL_EVENT);
     return result.data.data
 }
+const getEventlist = async () => {
+    const result = await axios.get(ApiUrl + Constant. GET_EVENT);
+    return result.data.data
+}
+const addEvents = async (obj) => {
+    const result = await axios.post(ApiUrl + Constant.ADD_EVENTS, obj);
+    return result.data
+}
+
+const editEvents = async (id) => {
+    const result = await axios.get(ApiUrl + Constant.EDIT_EVENTS+ id);
+    return result.data.data
+}
+
+const deleteEvents = async (id) => {
+    const result = await axios.get(ApiUrl + Constant. DELETE_EVENTS + id);
+    return result.data
+}
+
+const updateEvents = async (obj) => {
+    const result = await axios.post(ApiUrl + Constant.UPDATE_EVENTS, obj);
+    return result.data
+}
 
 
 
@@ -54,4 +77,4 @@ const showEventList = async () => {
 
 
 
-export { showBookingList, addBooking, updateBooking, editBooking, deleteBooking, showUserList, showEventList }
+export { showBookingList, addBooking, updateBooking, editBooking, deleteBooking, showUserList, showEventList,getEventlist ,addEvents, editEvents,deleteEvents,updateEvents}

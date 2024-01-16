@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+import { getEventlist, addEvents, editEvents, deleteEvents,updateEvents } from '../Services/Api'
+
 const Event = () => {
     let [Events, setEvents] = useState([]);
 
@@ -28,33 +30,32 @@ const Event = () => {
 
 
     useEffect(() => {
-        getAllEvents();
+        showEventData();
 
 
     }, [])
 
-    const getAllEvents = async () => {
-        const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/GetAllEvents')
-        setEvents(result.data.data)
+    const showEventData = () => {
+        getEventlist().then((data) => {
+            setEvents(data);
+
+        });
+    }
+
+    const addEventData = () => {
+        setEventObj(true);
+        addEvents(EventObj).then((data) => {
+            if (data.result) {
+                alert('Event Added Successfully');
+                showEventData();
+            }
+            else {
+                alert(data.message)
+            }
+        })
     }
 
 
-
-
-
-
-    const AddEvents = async () => {
-        debugger;
-        const result = await axios.post("https://freeapi.miniprojectideas.com/api/EventBooking/CreateEvent", EventObj)
-        if (result.data.result) {
-            alert("Addevent created succefully")
-            getAllEvents();
-
-        } else {
-            alert(result.data.message)
-        }
-
-    }
     const changeformvalue = (event, key) => {
         setEventObj(prevObj => ({ ...prevObj, [key]: event.target.value }))
     }
@@ -64,69 +65,67 @@ const Event = () => {
     const changeIsCoupleEntryMandatory = (event) => {
         setEventObj(prevObj => ({ ...prevObj, IsCoupleEntryMandatory: event.target.checked }))
     }
+    
+    const onEdit = (eventId) => {
 
+        editEvents(eventId).then((data) => {
+            setEventObj(data)
 
-    const onEdit = async (id) => {
-        try {
-            const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/GetEventById?id=' + id);
-            if (result.data.result) {
-                setEventObj(result.data.data)
+            
+        })
+
+    }
+    
+
+    const onDelete = (obj) => {
+        deleteEvents(obj).then((data) => {
+            if (data.result) {
+                alert('Event Data Deleted Successfully');
+                showEventData();
             }
             else {
-                alert(result.data.message)
+                alert(data.message)
             }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-
-    const onDelete = async (eventId) => {
-        const isDelete = window.confirm('Are You Sure Want To Delete');
-        if (isDelete) {
-            const result = await axios.get('https://freeapi.miniprojectideas.com/api/EventBooking/DeleteEventById?id=' + eventId);
-            if (result.data) {
-                alert('Event Deleted');
-                getAllEvents();
-            } else {
-                alert(result.data.message)
-            }
-        }
+        })
     }
     const UpdateEvent = async () => {
-        const result = await axios.post('https://freeapi.miniprojectideas.com/api/EventBooking/UpdateEvent', EventObj)
-        if (result.data.result) {
-            alert('Event Updated Succuessfully')
-            getAllEvents();
-        } else {
-            alert(result.data.message)
-        }
+        updateEvents(EventObj).then((data) => {
+            if (data.result) {
+
+                alert('update successfully')
+                showEventData();
+            } else {
+                alert(data.message)
+            }
+
+        })
 
     }
 
-    const OnResetEvent=()=>{
+
+    const OnResetEvent = () => {
         setEventObj({
-        "eventId": 0,
-        "eventName": "",
-        "description": "",
-        "location": "",
-        "startDate": "",
-        "startTime": "",
-        "endDate": "",
-        "endTime": "",
-        "imageUrl": "",
-        "capacity": "",
-        "price": 0,
-        "organizerId": 0,
-        "isIdentityMandatory": true,
-        "isCoupleEntryMandatory": true
+            "eventId": 0,
+            "eventName": "",
+            "description": "",
+            "location": "",
+            "startDate": "",
+            "startTime": "",
+            "endDate": "",
+            "endTime": "",
+            "imageUrl": "",
+            "capacity": "",
+            "price": 0,
+            "organizerId": 0,
+            "isIdentityMandatory": true,
+            "isCoupleEntryMandatory": true
         })
     }
     return (
         <div>
             <div className='container-fluid mt-2'>
                 <div className='row'>
-                <div className='col-4'>
+                    <div className='col-4'>
                         <div className='card'>
                             <div className='card-header  bg-warning'>
                                 Add Event
@@ -202,15 +201,15 @@ const Event = () => {
                                 <div className='row mt-2'>
                                     <div className='col-2'>
                                         {
-                                           EventObj.eventId == 0 && <button className='btn btn-success' onClick={AddEvents} >Save</button>
+                                            EventObj.eventId == 0 && <button className='btn btn-success' onClick={addEventData} >Save</button>
                                         }
                                         {
-                                           EventObj.eventId !== 0 && <button className='btn btn-warning' onClick={UpdateEvent}>Update</button>
+                                            EventObj.eventId !== 0 && <button className='btn btn-warning' onClick={UpdateEvent}>Update</button>
                                         }&nbsp;
 
                                     </div>
                                     <div className='col-2 '>
-                                    <button className='btn btn-secondary' onClick={OnResetEvent} >Reset</button>
+                                        <button className='btn btn-secondary' onClick={OnResetEvent} >Reset</button>
                                     </div>
                                 </div>
                             </div>
@@ -219,7 +218,7 @@ const Event = () => {
                     <div className='col-8'>
                         <div className='card'>
                             <div className=' card-header bg-warning'>
-                               Event Form
+                                Event Form
                             </div>
                             <div className='card-body'>
                                 <table className='table table-bordered'>
@@ -231,7 +230,7 @@ const Event = () => {
                                             
                                             <th>endDate</th> */}
                                             <th>organizerName</th>
-                                            
+
                                             <th>price</th>
                                             <th>location</th>
                                             <th>Edit</th>
@@ -250,7 +249,7 @@ const Event = () => {
                                                    
                                                     <td>{item.endDate}</td> */}
                                                     <td>{item.organizerName}</td>
-                                                   
+
                                                     <td>{item.price}</td>
                                                     <td>{item.location}</td>
                                                     <td>
@@ -267,7 +266,7 @@ const Event = () => {
                             </div>
                         </div>
                     </div>
-                    
+
 
 
                 </div>
