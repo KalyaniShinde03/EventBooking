@@ -12,7 +12,6 @@ const addBooking = async (obj) => {
     return result.data
 }
 
-
 const updateBooking = async (obj) => {
     const result = await axios.post(ApiUrl + Constant.UPDATE_BOOKING, obj);
     return result.data
