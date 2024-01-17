@@ -37,7 +37,7 @@ const showEventList = async () => {
     return result.data.data
 }
 const getEventlist = async () => {
-    const result = await axios.get(ApiUrl + Constant. GET_EVENT);
+    const result = await axios.get(ApiUrl + Constant.GET_EVENT);
     return result.data.data
 }
 const addEvents = async (obj) => {
@@ -51,7 +51,7 @@ const editEvents = async (id) => {
 }
 
 const deleteEvents = async (id) => {
-    const result = await axios.get(ApiUrl + Constant. DELETE_EVENTS + id);
+    const result = await axios.get(ApiUrl + Constant.DELETE_EVENTS + id);
     return result.data
 }
 
@@ -60,6 +60,31 @@ const updateEvents = async (obj) => {
     return result.data
 }
 
+const ongetAlluser = async () => {
+    const result = await axios.get(ApiUrl + Constant.GET_USER);
+    return result.data.data
+}
+
+
+const onAddUser = async (obj) => {
+    const result =await axios.post(ApiUrl + Constant.ADD_USER,obj);
+    return result.data
+}
+const onDeleteUser = async (id) => {
+    const result = await axios.get(ApiUrl + Constant.DELETE_USER + id);
+    return result.data
+}
+const onEditUser = async (id) => {
+    const result = await axios.get(ApiUrl + Constant.EDIT_USER + id);
+    return result.data.data
+}
+
+
+const onUpdateUser = async (obj) => {
+    const result = await axios.post(ApiUrl + Constant.UPDATE_USER,obj);
+    return result.data
+
+}
 
 
 
@@ -76,4 +101,6 @@ const updateEvents = async (obj) => {
 
 
 
-export { showBookingList, addBooking, updateBooking, editBooking, deleteBooking, showUserList, showEventList,getEventlist ,addEvents, editEvents,deleteEvents,updateEvents}
+
+
+export { showBookingList, addBooking, updateBooking, editBooking, deleteBooking, showUserList, showEventList,getEventlist ,addEvents, editEvents,deleteEvents,updateEvents,ongetAlluser,onAddUser,onEditUser,onDeleteUser,onUpdateUser}
